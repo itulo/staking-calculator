@@ -11,7 +11,13 @@ class KrakenOHLCResponse {
     private lateinit var result: JsonObject
 
     fun getHistoricalData(ticker: String): List<KrakenOHLC> {
-        val historicalDataTicker = result.get(if (ticker.contains("ETH")) "XETHZEUR" else ticker)
+        val historicalDataTicker = result.get(
+            when(ticker) {
+                "ETHEUR" -> "XETHZEUR"
+                "ETHUSD" -> "XETHZUSD"
+                else -> ticker
+            }
+        )
 
         val gson = Gson()
         val listType: Type = object : TypeToken<List<List<String>>>() {}.type
