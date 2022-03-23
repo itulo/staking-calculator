@@ -1,3 +1,3 @@
 
-rootProject.name = "crypto_counter"
+rootProject.name = "staking_calculator"
 

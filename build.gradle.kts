@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    implementation("com.opencsv:opencsv:5.5.2")
+    implementation("com.opencsv:opencsv:5.6")
     implementation("io.ktor:ktor-client-core:1.6.7")
     implementation("io.ktor:ktor-client-apache:1.6.7")
     implementation("io.ktor:ktor-client-gson:1.6.7")
@@ -36,7 +36,7 @@ tasks.withType<KotlinCompile>() {
 // create executable with :./gradlew clean installShadowDist
 tasks {
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveBaseName.set("crypto-counter")
+        archiveBaseName.set("staking_calculator")
         mergeServiceFiles()
     }
 }
