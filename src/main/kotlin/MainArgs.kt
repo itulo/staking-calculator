@@ -6,9 +6,9 @@ class MainArgs(parser: ArgParser) {
         help = "enable verbose mode"
     )
 
-    val coin by parser.storing(
-        "-c", "--coin",
-        help = "coin"
+    val fiat by parser.storing(
+        "--fiat",
+        help = "fiat"
     )
 
     val filename by parser.storing(

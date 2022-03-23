@@ -8,7 +8,7 @@ class KrakenOHLCResponse {
 
     lateinit var error: List<String>
 
-    lateinit var result: JsonObject
+    private lateinit var result: JsonObject
 
     fun getHistoricalData(ticker: String): List<KrakenOHLC> {
         val historicalDataTicker = result.get(if (ticker.contains("ETH")) "XETHZEUR" else ticker)
