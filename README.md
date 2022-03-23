@@ -5,7 +5,7 @@ The program does not require your API keys, however you need to export your data
 
 _Export type_ needs to be _Ledger_; select all _Ledger fields_.
 
-NOTE that staking transactions older than 2 years are not considered.
+NOTE that staking transactions older than 720 days are ignored.
 
 ### Build
     ./gradlew clean build
