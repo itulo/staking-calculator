@@ -1,2 +1,2 @@
-# staking-calculator
+# Kraken Staking Calculator
 ## Build
