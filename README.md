@@ -8,7 +8,7 @@ _Export type_ needs to be _Ledger_; select all _Ledger fields_.
     ./gradlew clean build
 ### Run
     java -jar build/libs/staking_calculator-2.0-SNAPSHOT-all.jar -f <kraken ledger file> --fiat <your fiat currency>
-you can also give the `-v` argument to see staking transactions and coins value at the time of the transaction.
+you can also give the `-v` argument to see staking transactions and coin value at the time of the transaction.
 
 #### Donations
 BTC: bc1qg3qq885ztne4xaltqajv6zzh9ctq0m95ax6g5c
