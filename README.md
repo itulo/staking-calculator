@@ -4,6 +4,9 @@ This program computes staking gains received from Kraken in a given fiat currenc
 The program does not require your API keys, however you need to export your data from [https://www.kraken.com/u/history/export](https://www.kraken.com/u/history/export).
 
 _Export type_ needs to be _Ledger_; select all _Ledger fields_.
+
+NOTE that staking transactions older than 2 years are not considered.
+
 ### Build
     ./gradlew clean build
 ### Run
