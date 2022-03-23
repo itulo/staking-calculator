@@ -29,6 +29,8 @@ suspend fun calculateStakingAmountInFiat(
     stakingRowsMap: Map<String, List<KrakenLedgerRow>>,
     fiat: String
 ) {
+    var totalSum = 0.0
+
     for ((stackedCoin, stakingRows) in stakingRowsMap) {
         val historicalData = getHistoricalData(stackedCoin, fiat)
         if (verboseLog) {
@@ -38,7 +40,7 @@ suspend fun calculateStakingAmountInFiat(
 
         }
 
-        var sum = 0.0
+        var coinSum = 0.0
         var rowsWithHistoricalData = 0
 
         for (row in stakingRows) {
@@ -53,16 +55,18 @@ suspend fun calculateStakingAmountInFiat(
                     if (verboseLog) {
                         println("row: $row historicalData: ${historicalData[i]}: received $partialSum")
                     }
-                    sum += partialSum
+                    coinSum += partialSum
                     rowsWithHistoricalData++
                     break
                 }
             }
         }
 
-        println("Found historical data for $rowsWithHistoricalData staking rows. Staking for $stackedCoin total is $sum $fiat\n")
+        println("Found historical data for $rowsWithHistoricalData staking rows. Staking for $stackedCoin total is $coinSum $fiat\n")
+        totalSum += coinSum
     }
 
+    println("Total staking rewards: $totalSum $fiat\n")
 }
 
 var verboseLog = false
