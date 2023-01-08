@@ -10,8 +10,15 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.ZoneId
 
+fun transformCoinTicker(coin: String): String {
+    return when (coin) {
+        "ETH2", "XETH" -> "ETH"
+        else -> coin
+    }
+}
+
 suspend fun getHistoricalData(coin: String, fiat: String): List<KrakenOHLC> {
-    val ticker = (if (coin.equals("ETH2", ignoreCase = true)) "ETH" else coin) + fiat
+    val ticker = transformCoinTicker(coin) + fiat
     val client = HttpClient(Apache) {
         install(JsonFeature) {
             serializer = GsonSerializer()
