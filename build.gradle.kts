@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.italoarmenti"
-version = "2.0-SNAPSHOT"
+version = "2.1-SNAPSHOT"
 
 repositories {
     mavenCentral()
