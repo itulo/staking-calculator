@@ -76,6 +76,20 @@ suspend fun calculateStakingAmountInFiat(
     println("Total staking rewards: $totalSum $fiat\n")
 }
 
+fun transformAssetName(rows: List<KrakenLedgerRow>) {
+    rows.forEach {
+        it.asset = when {
+            it.asset == "DOT28.S" -> "DOT"        // DOT 28 day bounded staking
+            it.asset == "MATIC04.S" -> "MATIC"    // MATIC 4 day bounded staking
+            // some staking row asset is appended by a '.S' (e.g. there can be rows with asset FLOW and FLOW.S)
+            // get rid of the append, so we can group by asset
+            it.asset.endsWith(".S") -> it.asset.replace(".S", "")
+            else -> it.asset
+        }
+    }
+    return
+}
+
 var verboseLog = false
 const val staking = "staking"
 suspend fun main(args: Array<String>) {
@@ -92,9 +106,7 @@ suspend fun main(args: Array<String>) {
         KrakenLedgerRow::class.java
     ).filter { it.type == staking }
 
-    // some staking row asset is appended by a '.S' (e.g. there can be rows with asset FLOW and FLOW.S)
-    // get rid of the append so we can group by asset
-    stakingRows.forEach { it.asset = it.asset.replace(".S", "") }
+    transformAssetName(stakingRows)
 
     val stakingRowsMap = stakingRows.groupBy { it.asset }
 
