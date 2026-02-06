@@ -17,6 +17,13 @@ fun transformCoinTicker(coin: String): String {
     }
 }
 
+fun transformTickerResult(ticker: String): String {
+    return when (ticker) {
+        "BTCEUR" -> "XXBTZEUR"
+        else -> ticker
+    }
+}
+
 suspend fun getHistoricalData(coin: String, fiat: String): List<KrakenOHLC> {
     val ticker = transformCoinTicker(coin) + fiat
     val client = HttpClient(Apache) {
@@ -29,16 +36,16 @@ suspend fun getHistoricalData(coin: String, fiat: String): List<KrakenOHLC> {
             client.get<KrakenOHLCResponse>("https://api.kraken.com/0/public/OHLC?pair=$ticker&interval=1440")
         client.close()
 
-    return res.getHistoricalData(ticker)
+    return res.getHistoricalData(transformTickerResult(ticker))
 }
 
-suspend fun calculateStakingAmountInFiat(
-    stakingRowsMap: Map<String, List<KrakenLedgerRow>>,
+suspend fun calculateearningAmountInFiat(
+    earningRowsMap: Map<String, List<KrakenLedgerRow>>,
     fiat: String
 ) {
     var totalSum = 0.0
 
-    for ((stackedCoin, stakingRows) in stakingRowsMap) {
+    for ((stackedCoin, earningRows) in earningRowsMap) {
         val historicalData = getHistoricalData(stackedCoin, fiat)
         if (verboseLog) {
             println("${historicalData.size} days of historical data fetched for $stackedCoin " +
@@ -50,7 +57,7 @@ suspend fun calculateStakingAmountInFiat(
         var coinSum = 0.0
         var rowsWithHistoricalData = 0
 
-        for (row in stakingRows) {
+        for (row in earningRows) {
             val time = SimpleDateFormat("yyyy-MM-dd kk:mm:ss").parse(row.time).time / 1000
 
             var dateData: KrakenOHLC
@@ -69,19 +76,19 @@ suspend fun calculateStakingAmountInFiat(
             }
         }
 
-        println("Found historical data for $rowsWithHistoricalData staking rows. Staking for $stackedCoin total is $coinSum $fiat\n")
+        println("Found historical data for $rowsWithHistoricalData earning rows. earning for $stackedCoin total is $coinSum $fiat\n")
         totalSum += coinSum
     }
 
-    println("Total staking rewards: $totalSum $fiat\n")
+    println("Total earning rewards: $totalSum $fiat\n")
 }
 
 fun transformAssetName(rows: List<KrakenLedgerRow>) {
     rows.forEach {
         it.asset = when {
-            it.asset == "DOT28.S" -> "DOT"        // DOT 28 day bounded staking
-            it.asset == "MATIC04.S" -> "MATIC"    // MATIC 4 day bounded staking
-            // some staking row asset is appended by a '.S' (e.g. there can be rows with asset FLOW and FLOW.S)
+            it.asset == "DOT28.S" -> "DOT"        // DOT 28 day bounded earning
+            it.asset == "MATIC04.S" -> "MATIC"    // MATIC 4 day bounded earning
+            // some earning row asset is appended by a '.S' (e.g. there can be rows with asset FLOW and FLOW.S)
             // get rid of the append, so we can group by asset
             it.asset.endsWith(".S") -> it.asset.replace(".S", "")
             else -> it.asset
@@ -91,7 +98,7 @@ fun transformAssetName(rows: List<KrakenLedgerRow>) {
 }
 
 var verboseLog = false
-const val staking = "staking"
+const val earning = "earn"
 suspend fun main(args: Array<String>) {
     var ledgerFilename: String
     var fiatSymbol: String
@@ -101,16 +108,16 @@ suspend fun main(args: Array<String>) {
         verboseLog = verbose
     }
 
-    val stakingRows = CSVReader.readCSV(
+    val earningRows = CSVReader.readCSV(
         ledgerFilename,
         KrakenLedgerRow::class.java
-    ).filter { it.type == staking }
+    ).filter { it.type == earning }
 
-    transformAssetName(stakingRows)
+    transformAssetName(earningRows)
 
-    val stakingRowsMap = stakingRows.groupBy { it.asset }
+    val earningRowsMap = earningRows.groupBy { it.asset }
 
-    println("coins with staking transactions found: ${stakingRowsMap.keys}\n")
+    println("coins with earning transactions found: ${earningRowsMap.keys}\n")
 
-    calculateStakingAmountInFiat(stakingRowsMap, fiatSymbol)
+    calculateearningAmountInFiat(earningRowsMap, fiatSymbol)
 }
